@@ -1,7 +1,10 @@
 package org.example.conifg;
 
 import org.example.RabbitMQConfig;
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.HeadersExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.BeansException;
@@ -10,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 实现BeanPostProcessor类，使用Bean的生命周期函数
@@ -43,58 +48,46 @@ public class DirectRabbitConfig implements BeanPostProcessor {
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        rabbitAdmin.declareExchange(rabbitmqDemoTopicExchange());
-        rabbitAdmin.declareQueue(topicExchangeQueueA());
-        rabbitAdmin.declareQueue(topicExchangeQueueB());
-        rabbitAdmin.declareQueue(topicExchangeQueueC());
+        rabbitAdmin.declareExchange(rabbitmqDemoHeadersExchange());
+        rabbitAdmin.declareQueue(headersQueueA());
+        rabbitAdmin.declareQueue(headersQueueB());
         return null;
     }
-
     @Bean
-    public TopicExchange rabbitmqDemoTopicExchange() {
-        //配置TopicExchange交换机
-        return new TopicExchange(RabbitMQConfig.TOPIC_EXCHANGE_DEMO_NAME, true, false);
+    public Queue headersQueueA() {
+        return new Queue(RabbitMQConfig.HEADERS_EXCHANGE_QUEUE_A, true, false, false);
     }
 
     @Bean
-    public Queue topicExchangeQueueA() {
-        //创建队列1
-        return new Queue(RabbitMQConfig.TOPIC_EXCHANGE_QUEUE_A, true, false, false);
+    public Queue headersQueueB() {
+        return new Queue(RabbitMQConfig.HEADERS_EXCHANGE_QUEUE_B, true, false, false);
     }
 
     @Bean
-    public Queue topicExchangeQueueB() {
-        //创建队列2
-        return new Queue(RabbitMQConfig.TOPIC_EXCHANGE_QUEUE_B, true, false, false);
+    public HeadersExchange rabbitmqDemoHeadersExchange() {
+        return new HeadersExchange(RabbitMQConfig.HEADERS_EXCHANGE_DEMO_NAME, true, false);
     }
 
     @Bean
-    public Queue topicExchangeQueueC() {
-        //创建队列3
-        return new Queue(RabbitMQConfig.TOPIC_EXCHANGE_QUEUE_C, true, false, false);
+    public Binding bindHeadersA() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("key_one", "java");
+        map.put("key_two", "rabbit");
+        //全匹配
+        return BindingBuilder.bind(headersQueueA())
+                .to(rabbitmqDemoHeadersExchange())
+                .whereAll(map).match();
     }
 
     @Bean
-    public Binding bindTopicA() {
-        //队列A绑定到FanoutExchange交换机
-        return BindingBuilder.bind(topicExchangeQueueB())
-                .to(rabbitmqDemoTopicExchange())
-                .with("a.*");
+    public Binding bindHeadersB() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("headers_A", "coke");
+        map.put("headers_B", "sky");
+        //部分匹配
+        return BindingBuilder.bind(headersQueueB())
+                .to(rabbitmqDemoHeadersExchange())
+                .whereAny(map).match();
     }
 
-    @Bean
-    public Binding bindTopicB() {
-        //队列A绑定到FanoutExchange交换机
-        return BindingBuilder.bind(topicExchangeQueueC())
-                .to(rabbitmqDemoTopicExchange())
-                .with("a.*");
-    }
-
-    @Bean
-    public Binding bindTopicC() {
-        //队列A绑定到FanoutExchange交换机
-        return BindingBuilder.bind(topicExchangeQueueA())
-                .to(rabbitmqDemoTopicExchange())
-                .with("rabbit.#");
-    }
 }

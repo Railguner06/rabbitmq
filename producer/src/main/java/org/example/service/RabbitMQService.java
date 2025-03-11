@@ -1,6 +1,8 @@
 package org.example.service;
 
+import java.util.Map;
+
 public interface RabbitMQService {
-    String sendMsgByTopicExchange(String msg, String routingKey) throws Exception;
+    String sendMsgByHeadersExchange(String msg, Map<String, Object> map) throws Exception;
 
 }
