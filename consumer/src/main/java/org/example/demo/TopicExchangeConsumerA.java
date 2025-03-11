@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-@RabbitListener(queuesToDeclare = @Queue(RabbitMQConfig.FANOUT_EXCHANGE_QUEUE_TOPIC_A))
-public class FanoutExchangeConsumerA {
+@RabbitListener(queuesToDeclare = @Queue(RabbitMQConfig.TOPIC_EXCHANGE_QUEUE_A))
+public class TopicExchangeConsumerA {
 
     @RabbitHandler
     public void process(Map<String, Object> map) {
-        System.out.println("队列A收到消息：" + map.toString());
+        System.out.println("队列[" + RabbitMQConfig.TOPIC_EXCHANGE_QUEUE_A + "]收到消息：" + map.toString());
     }
-
 }

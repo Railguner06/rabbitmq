@@ -19,19 +19,30 @@ public class RabbitMQServiceImpl implements RabbitMQService {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
-    //发布消息
+    /**
+     * 发布消息
+     * @param msg
+     * @return
+     * @throws Exception
+     */
     @Override
-    public String sendMsgByFanoutExchange(String msg) throws Exception {
+    public String sendMsgByTopicExchange(String msg, String routingKey) throws Exception {
         Map<String, Object> message = getMessage(msg);
         try {
-            rabbitTemplate.convertAndSend(RabbitMQConfig.FANOUT_EXCHANGE_DEMO_NAME, "", message);
+            //发送消息
+            rabbitTemplate.convertAndSend(RabbitMQConfig.TOPIC_EXCHANGE_DEMO_NAME, routingKey, message);
             return "ok";
         } catch (Exception e) {
             e.printStackTrace();
             return "error";
         }
     }
-    //组装消息体
+
+    /**
+     * 组装消息体
+     * @param msg
+     * @return
+     */
     private Map<String, Object> getMessage(String msg) {
         String msgId = UUID.randomUUID().toString().replace("-", "").substring(0, 32);
         String sendTime = sdf.format(new Date());
