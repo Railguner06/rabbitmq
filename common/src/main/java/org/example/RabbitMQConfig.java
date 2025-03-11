@@ -2,16 +2,18 @@ package org.example;
 
 public class RabbitMQConfig {
     /**
-     * 队列主题名称
+     * RabbitMQ的FANOUT_EXCHANG交换机类型的队列 A 的名称
      */
-    public static final String RABBITMQ_DEMO_TOPIC = "rabbitmqDemoTopic";
+    public static final String FANOUT_EXCHANGE_QUEUE_TOPIC_A = "fanout.A";
+
     /**
-     * direct交换机名称
+     * RabbitMQ的FANOUT_EXCHANG交换机类型的队列 B 的名称
      */
-    public static final String RABBITMQ_DEMO_DIRECT_EXCHANGE = "rabbitmqDemoExchange";
+    public static final String FANOUT_EXCHANGE_QUEUE_TOPIC_B = "fanout.B";
+
     /**
-     * direct交换机和队列绑顶的匹配键 DirectRouting
+     * RabbitMQ的FANOUT_EXCHANG交换机类型的名称
      */
-    public static final String RABBITMQ_DEMO_DIRECT_ROUTING = "rabbitmqDemoRouting";
+    public static final String FANOUT_EXCHANGE_DEMO_NAME = "fanout.exchange.demo.name";
 
 }

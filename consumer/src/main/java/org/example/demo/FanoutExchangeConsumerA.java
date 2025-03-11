@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-//不存在则会创建队列
-@RabbitListener(queuesToDeclare = @Queue(RabbitMQConfig.RABBITMQ_DEMO_TOPIC))
-public class RabbitDemoConsumer {
+@RabbitListener(queuesToDeclare = @Queue(RabbitMQConfig.FANOUT_EXCHANGE_QUEUE_TOPIC_A))
+public class FanoutExchangeConsumerA {
 
     @RabbitHandler
-    public void process(Map map){
-        System.out.println("消费者RabbitDemoConsumer从RabbitMQ服务端消费信息：" + map.toString());
+    public void process(Map<String, Object> map) {
+        System.out.println("队列A收到消息：" + map.toString());
     }
+
 }

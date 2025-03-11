@@ -17,8 +17,8 @@ public class RabbitMQController {
      * 发送消息
      * @author java技术爱好者
      */
-    @PostMapping("/sendMsg")
-    public String sendMsg(@RequestParam(name = "msg") String msg) throws Exception {
-        return rabbitMQService.sendMsg(msg);
+    @PostMapping("/publish")
+    public String publish(@RequestParam(name = "msg") String msg) throws Exception {
+        return rabbitMQService.sendMsgByFanoutExchange(msg);
     }
 }
